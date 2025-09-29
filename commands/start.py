@@ -7,6 +7,8 @@ REQUIRED_CHANNELS = [
     ("CodeMindClub", "codeMindClub")
 ]
 
+INSTAGRAM_LINK = "https://www.instagram.com/murod_karabekov/"
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     name = user.first_name or "Do‘stim"
@@ -21,6 +23,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if not_subscribed:
         buttons = [[InlineKeyboardButton(title, url=url)] for title, url in not_subscribed]
+        buttons.append([InlineKeyboardButton("📸 Instagram", url=INSTAGRAM_LINK)])
+        
         keyboard = InlineKeyboardMarkup(buttons)
 
         text = ( f"👋 Salom, {name}!\n\n" 
