@@ -1,6 +1,7 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, CommandHandler, MessageHandler, ConversationHandler, CallbackQueryHandler, filters
 import asyncpg
+import asyncio 
 
 ASK_LINK, ASK_CHANNEL = range(2)
 
