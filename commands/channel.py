@@ -42,7 +42,7 @@ async def save_channel(update: Update, context: ContextTypes.DEFAULT_TYPE):
         host="localhost"
     )
 
-    # Foydalanuvchini DB ga qo'shish
+    # Foydalanuvchini DB ga qo‘shish
     user_row = await conn.fetchrow("SELECT id FROM users WHERE tg_id=$1", user.id)
     if not user_row:
         user_row = await conn.fetchrow(
@@ -51,7 +51,7 @@ async def save_channel(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     user_id = user_row["id"]
 
-    # Kanalni DB ga qo‘shish
+    # Kanalni DB ga qo‘shish (link + id bilan)
     await conn.execute(
         """
         INSERT INTO channels(user_id, channel_name, channel_link)
