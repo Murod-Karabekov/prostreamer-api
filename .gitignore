@@ -20,3 +20,8 @@ local.env
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
+
+# Telegram session files
+*.session
+*.session-journal
+
