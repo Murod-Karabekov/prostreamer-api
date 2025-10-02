@@ -17,7 +17,7 @@ client = TelegramClient("session/prostreamer", API_ID, API_HASH)
 async def main():
     print("📲 Telegram sessiya yaratish jarayoni boshlandi...")
     await client.start()
-    print("✅ Sessiya muvaffaqiyatli yaratildi va 'session/homebazar.session' faylida saqlandi.")
+    print("✅ Sessiya muvaffaqiyatli yaratildi va 'session/prostreamer.session' faylida saqlandi.")
 
 if __name__ == "__main__":
     with client:

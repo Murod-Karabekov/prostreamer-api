@@ -1,6 +1,7 @@
 tgcrypto
 telethon
 asyncio
+asyncpg
 ffmpeg-python
 python-telegram-bot
 py-tgcalls

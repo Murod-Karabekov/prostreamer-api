@@ -2,14 +2,17 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CommandHandler, MessageHandler, CallbackQueryHandler, ConversationHandler, filters, ContextTypes
 import asyncpg
 
-from commands.startstream import startstream_handler, stopstream_handler
+from commands.startstream import startstream_handler
+from commands.stopstream import stopstream_handler
 
 ASK_LINK, ASK_CHANNEL = range(2)
 
+# Stream boshlash
 async def stream_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Iltimos, stream qilmoqchi bo‘lgan video yoki audio linkini yuboring:")
     return ASK_LINK
 
+# Linkni saqlash va kanal tanlashga o'tish
 async def save_stream_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     link = update.message.text.strip()
@@ -18,7 +21,10 @@ async def save_stream_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # DB dan foydalanuvchining kanallarini olish
     conn = await asyncpg.connect(user="prostreamer", password="secretpassword",
                                  database="prostreamerdb", host="localhost")
-    channels = await conn.fetch("SELECT id, channel_name FROM channels WHERE user_id=(SELECT id FROM users WHERE tg_id=$1)", user.id)
+    channels = await conn.fetch(
+        "SELECT id, channel_name FROM channels WHERE user_id=(SELECT id FROM users WHERE tg_id=$1)",
+        user.id
+    )
     await conn.close()
 
     if not channels:
@@ -30,16 +36,23 @@ async def save_stream_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Qaysi kanalga stream qilmoqchisiz?", reply_markup=keyboard)
     return ASK_CHANNEL
 
+# Kanalni tanlash va Start/Stop tugmalarini ko'rsatish
 async def choose_channel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     channel_id = int(query.data)
     stream_link = context.user_data['stream_link']
 
-    # DB ga saqlash
+    # Tanlangan kanal ID ni saqlash
+    context.user_data['selected_channel_id'] = channel_id
+
+    # DB ga stream link saqlash
     conn = await asyncpg.connect(user="prostreamer", password="secretpassword",
                                  database="prostreamerdb", host="localhost")
-    await conn.execute("INSERT INTO streams(channel_id, stream_url) VALUES($1, $2)", channel_id, stream_link)
+    await conn.execute(
+        "INSERT INTO streams(channel_id, stream_url) VALUES($1, $2)",
+        channel_id, stream_link
+    )
     await conn.close()
 
     # Start / Stop tugmalari
@@ -52,6 +65,7 @@ async def choose_channel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.edit_message_text(f"Stream link muvaffaqiyatli saqlandi! ✅\nLink: {stream_link}", reply_markup=keyboard)
     return ConversationHandler.END
 
+# ConversationHandler
 stream_handler = ConversationHandler(
     entry_points=[CommandHandler("stream", stream_start)],
     states={
